@@ -9,15 +9,17 @@ use Illuminate\Support\Facades\Redirect;
 
 class CartController extends Controller
 {
-
     /**
-     * kosár listázása
+     * @return array
      */
-    public function index()
+    public static function getCartData()
     {
         $cart = session("cart");
         $ids = [];
-        foreach ($cart as $product_id => $quantity){
+        if(empty($cart)){
+            $cart = [];
+        }
+        foreach ($cart as $product_id => $quantity) {
             $ids[] = $product_id;
         }
 
@@ -27,7 +29,25 @@ class CartController extends Controller
             "cart" => $cart,
             "products" => $products
         ];
-        return view("cart.index", $params);
+//        var_dump($params);
+        return $params;
+    }
+
+    /**
+     * kosár listázása
+     */
+    public function index()
+    {
+        return view("cart.index", self::getCartData());
+    }
+
+    public function destroy($cart)
+    {
+        $cartData = session("cart");
+        unset($cartData[$cart]);
+        $this->saveCart($cartData);
+        
+        return Redirect::route("cart.index");
     }
 
     /**
@@ -36,15 +56,27 @@ class CartController extends Controller
     public function store(Request $request)
     {
 
-
-        $cart = session("cart", []);
-
-        $cart[$request->input("product_id")] = $request->input("quantity");
-        session([
-            "cart" => $cart
-        ]);
+        $this->addProductToCart($request->input("product_id"), $request->input("quantity"));
 
         return Redirect::route("cart.index");
     }
 
+    public function addProductToCart($productID, $quantity)
+    {
+        $cart = session("cart", []);
+        if(isset($cart[$productID])){
+            $cart[$productID] += $quantity;
+        }else{
+            $cart[$productID] = $quantity;
+        }
+        $this->saveCart($cart);
+    }
+
+    private function saveCart($cart)
+    {
+        session([
+            "cart" => $cart
+        ]);
+
+    }
 }

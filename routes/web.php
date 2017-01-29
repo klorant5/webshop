@@ -22,3 +22,10 @@ Route::get('/home', 'HomeController@index');
 Route::resource("products", ProductsController::class);
 
 Route::resource("cart", CartController::class);
+
+Route::resource("order", OrderController::class);
+
+
+//Route::resource('photo', 'PhotoController', ['except' => [
+//    'create', 'store', 'update', 'destroy'
+//]]);
