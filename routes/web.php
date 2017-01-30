@@ -19,6 +19,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
+Route::get('/thank-you', 'HomeController@thanx');
+
 Route::resource("products", ProductsController::class);
 
 Route::resource("cart", CartController::class);

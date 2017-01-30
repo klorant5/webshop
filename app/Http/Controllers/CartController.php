@@ -46,7 +46,7 @@ class CartController extends Controller
         $cartData = session("cart");
         unset($cartData[$cart]);
         $this->saveCart($cartData);
-        
+
         return Redirect::route("cart.index");
     }
 
@@ -72,6 +72,13 @@ class CartController extends Controller
         $this->saveCart($cart);
     }
 
+    public static function flushCart()
+    {
+        session([
+            "cart" => []
+        ]);
+
+    }
     private function saveCart($cart)
     {
         session([
